@@ -75,7 +75,7 @@ Route::post('stripe/webhook', '\Bulkly\Http\Controllers\WebhookController@handle
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/buffer/change/{buffer_id}', 'HomeController@bufferChange')->name('bufferChange');
 Route::resource('subscriptions', 'SubscriptionController');
-Route::get('/settings', 'PagesController@settings')->name('settings');;
+Route::get('/settings', 'PagesController@settings')->name('settings'); 
 Route::get('/social-accounts', 'PagesController@socialAccounts')->name('social-accounts');
 Route::get('/users/confirmation/', 'PagesController@confirmation');
 Route::get('/users/confirmation/{token}', 'PagesController@confirmationToken')->name('confirmation');
@@ -191,8 +191,8 @@ Route::post('/update-card-info', function(Request $request){
     dd($input);
 });
 Route::post('/close-account/', function(Request $request){
-
-
+    
+    
     $input = $request->input();
     if(isset($input['type'])){
         $user = User::find($request->user_id);
@@ -202,29 +202,29 @@ Route::post('/close-account/', function(Request $request){
         \Cookie::queue(\Cookie::forget('campaign_email'));
         \Cookie::queue('campaign_email', uniqid().'@bulk.ly', 7*24*60);
         \Illuminate\Support\Facades\Auth::guard('web')->logout();
-
+        
         $subsModel = new \Bulkly\Subscriptions();
         $subsModel->where('user_id', $id)->delete();
-
+        
         $groupModel = new SocialPostGroups();
         $groupModel->where('user_id', $id)->delete();
-
+        
         $bufferModel = new BufferPosting();
         $bufferModel->where('user_id', $id)->delete();
-
+        
         $socialModel = new SocialAccounts();
         $socialModel->where('user_id', $id)->delete();
-
+        
         $userModel = new User();
         $a = $userModel->where('id', $id)->delete();
-
-
+        
+        
         return redirect('login');
     }
     else {
         $user = User::find($request->user_id);
         $check = $user->subscription($request->user_plan)->cancelNow();
-
+        
         try{
             $client = new Client;
             $result = $client->request('POST', 'https://api2.autopilothq.com/v1/contact', [
@@ -240,15 +240,15 @@ Route::post('/close-account/', function(Request $request){
                             'string--Subscription--Status' => 'close',
                         ],
                         '_autopilot_list' => '9ECC7B84-9EB3-43EB-8C08-72A20E2573EA'
-                    ]
+                        ]
                 ]
-            ]);
-        }
-        catch (Exception $e) {
-        }
-
-        \Illuminate\Support\Facades\Auth::guard('web')->logout();
-        return redirect('login');
+                ]);
+            }
+            catch (Exception $e) {
+            }
+            
+            \Illuminate\Support\Facades\Auth::guard('web')->logout();
+            return redirect('login');
     }
 });
 
@@ -343,10 +343,10 @@ Route::post('/update-temp-user', function(Request  $request){
                     $user->password = bcrypt($request->password);
                     $user->user_meta = serialize($user_meta);
                     $user->save();
-
+                    
                     \Cookie::queue(\Cookie::forget('campaign_email'));
                     \Cookie::queue('campaign_email', $user->email, 7*24*60);
-
+                    
                     try{
                         $client = new Client;
                         $result = $client->request('POST', 'https://api2.autopilothq.com/v1/contact', [
@@ -363,100 +363,102 @@ Route::post('/update-temp-user', function(Request  $request){
                                         'string--Campaign' => 'Bulkly - Buffer Import Campaign',
                                     ],
                                     '_autopilot_list' => '9ECC7B84-9EB3-43EB-8C08-72A20E2573EA'
-                                ]
-                            ] //
-                        ]);
-                    } catch (RequestException $e) {
-
-                    } catch (ClientException $e) {
-
+                                    ]
+                                    ] //
+                                    ]);
+                                } catch (RequestException $e) {
+                                    
+                                } catch (ClientException $e) {
+                                    
+                                }
+                                
+                                
+                                return json_encode(array('status'=>'ok', 'message'=>'User created', 'reload'=> 'yes' ));
+                            }
+                            
+                        } else {
+                            return json_encode(array('status'=>'ok', 'message'=>'Password required', 'reload'=> 'no'));
+                        }
                     }
-
-
-                    return json_encode(array('status'=>'ok', 'message'=>'User created', 'reload'=> 'yes' ));
+                    
+                } else {
+                    
+                    return json_encode(array('status'=>'ok', 'message'=>'Email required', 'reload'=> 'no'));
                 }
+            });
+            
+            Route::get('/campaign', function(){
+                // get campaign Cookie
+                $campaign_cookie = \Cookie::get('campaign');
+                $campaign_email = \Cookie::get('campaign_email');
+                if(!$campaign_cookie && !$campaign_email){
+                    // set campaign Cookie
+                    \Cookie::queue('campaign', 'true', 7*24*60);
+                    \Cookie::queue('campaign_email', time().'@bulk.ly', 7*24*60);
+                }
+                $campaign_cookie = \Cookie::get('campaign');
+                $campaign_email = \Cookie::get('campaign_email');
+                $redirect_ur = "https://bufferapp.com/oauth2/authorize?client_id=".env('BUFFER_CLIENT_ID')."&redirect_uri=".env('BUFFER_REDIRECT')."&response_type=code";
+                return redirect(url($redirect_ur));
+            });
+            
+            Route::get('/auth/logout', function(Request $request){
+                Illuminate\Support\Facades\Auth::logout();
+                return redirect(url('/login'));
+            })->name('auth.logout');
+            
+            Route::post('/auth/login', 'Auth\LoginController@loginNow')->name('auth.login');
+            
+            
+            Route::get('/rebrandly-test', function(){
 
-            } else {
-                return json_encode(array('status'=>'ok', 'message'=>'Password required', 'reload'=> 'no'));
-            }
-        }
-
-    } else {
-
-        return json_encode(array('status'=>'ok', 'message'=>'Email required', 'reload'=> 'no'));
-    }
-});
-
-Route::get('/campaign', function(){
-    // get campaign Cookie
-    $campaign_cookie = \Cookie::get('campaign');
-    $campaign_email = \Cookie::get('campaign_email');
-    if(!$campaign_cookie && !$campaign_email){
-        // set campaign Cookie
-        \Cookie::queue('campaign', 'true', 7*24*60);
-        \Cookie::queue('campaign_email', time().'@bulk.ly', 7*24*60);
-    }
-    $campaign_cookie = \Cookie::get('campaign');
-    $campaign_email = \Cookie::get('campaign_email');
-    $redirect_ur = "https://bufferapp.com/oauth2/authorize?client_id=".env('BUFFER_CLIENT_ID')."&redirect_uri=".env('BUFFER_REDIRECT')."&response_type=code";
-    return redirect(url($redirect_ur));
-});
-
-Route::get('/auth/logout', function(Request $request){
-    Illuminate\Support\Facades\Auth::logout();
-    return redirect(url('/login'));
-})->name('auth.logout');
-
-Route::post('/auth/login', 'Auth\LoginController@loginNow')->name('auth.login');
-
-
-Route::get('/rebrandly-test', function(){
-
-    $user = \Bulkly\User::find(\Auth::id());
-
-
-    try{
-
-
-
-        $client = new Client([
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $user->rebrandly_key
-            ]
-        ]);
+                $user = \Bulkly\User::find(\Auth::id());
+                
+                
+                try{
+                    
+                    
+                    
+                    $client = new Client([
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Authorization' => 'Bearer ' . $user->rebrandly_key
+                            ]
+                            ]);
 
         $result = $client->post('https://api.rebrandly.com/v1/links',
-            ['body' => json_encode(
-                [
-                    'destination' => 'https://bitbucket.org/coredeveloper2013/overlog',
-                    'domain' => [
-                        'id' => $user->rebrandly_domain,
+        ['body' => json_encode(
+            [
+                'destination' => 'https://bitbucket.org/coredeveloper2013/overlog',
+                'domain' => [
+                    'id' => $user->rebrandly_domain,
                     ]
-                ]
-            )]
-        );
-
-
-
-        dump(json_decode($result->getBody()));
-
-    } catch ( ClientException $e) {
-
-        dump($e->getResponse()->getBody()->getContents());
-
-    } catch (RequestException $e) {
-
-        dump($e->getResponse()->getBody()->getContents());
-
-    }
-
-
-
-});
-
-Route::get('/sendPostTest', 'CronController@sendPostTest');
-
-Route::get('/app/bulk.ly/free/{code}','Auth\RegisterController@validUserRegistrationForm')->name('bulk.free-signup');
-Route::post('/app/bulk.ly/free/signUp/{code}','Auth\RegisterController@validUserRegistration');
-
+                    ]
+                    )]
+                );
+                
+                
+                
+                dump(json_decode($result->getBody()));
+                
+            } catch ( ClientException $e) {
+                
+                dump($e->getResponse()->getBody()->getContents());
+                
+            } catch (RequestException $e) {
+                
+                dump($e->getResponse()->getBody()->getContents());
+                
+            }
+            
+            
+            
+        });
+        
+        Route::get('/sendPostTest', 'CronController@sendPostTest');
+        
+        Route::get('/app/bulk.ly/free/{code}','Auth\RegisterController@validUserRegistrationForm')->name('bulk.free-signup');
+        Route::post('/app/bulk.ly/free/signUp/{code}','Auth\RegisterController@validUserRegistration');
+        
+        
+        Route::get('/newMenu', 'BufferPostingController@newMenu')->name('newMenu'); 

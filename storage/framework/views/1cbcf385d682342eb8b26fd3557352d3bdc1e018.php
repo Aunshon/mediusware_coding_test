@@ -91,6 +91,7 @@
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'userGuidingLayer', '3592590ID');
     </script>
+    <script src="<?php echo e(asset('js/app.js')); ?>"></script>
 </head>
 <body>
 <?php
@@ -319,6 +320,8 @@ if($user_meta['temp_user'] === true){
 
                     <li <?php if($route=='history'): ?> class="active" <?php endif; ?>><a href="<?php echo e(url('/history')); ?>"> <i
                                     class="fa fa-home"></i> History</a></li>
+                    <li <?php if($route=='newMenu'): ?> class="active" <?php endif; ?>><a href="<?php echo e(url('/newMenu')); ?>"> <i
+                                    class="fa fa-home"></i> New Menu</a></li>
                 <?php endif; ?>
             </ul>
         </div><!-- /.container-fluid -->
@@ -328,7 +331,6 @@ if($user_meta['temp_user'] === true){
 
 <script src="//fast.appcues.com/widget-bundle.js" type="text/javascript"></script>
 
-<script src="<?php echo e(asset('js/app.js')); ?>"></script>
 <script>
 
     var hash = window.location.hash;
