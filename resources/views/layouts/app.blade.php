@@ -91,7 +91,8 @@
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'userGuidingLayer', '3592590ID');
     </script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+    <script src="{{ mix('js/app.js') }}"></script>
 </head>
 <body>
 <?php
@@ -215,6 +216,7 @@ if($user_meta['temp_user'] === true){
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div id="app">
+    <ExampleComponent/>
     <div class="ajax-working">
         <div class="sk-fading-circle">
             <div class="sk-circle1 sk-circle"></div>
@@ -324,6 +326,7 @@ if($user_meta['temp_user'] === true){
                                     class="fa fa-home"></i> History</a></li>
                     <li @if ($route=='newMenu') class="active" @endif><a href="{{ url('/newMenu') }}"> <i
                                     class="fa fa-home"></i> New Menu</a></li>
+                    
                 @endif
             </ul>
         </div><!-- /.container-fluid -->

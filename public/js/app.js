@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 44);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -11884,8 +11884,12 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_ExampleComponent_vue__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_ExampleComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__components_ExampleComponent_vue__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -11894,7 +11898,7 @@ process.umask = function() { return 0; };
 
 __webpack_require__(8);
 
-window.Vue = __webpack_require__(43);
+window.Vue = __webpack_require__(44);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -11902,10 +11906,15 @@ window.Vue = __webpack_require__(43);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', __webpack_require__(39));
+// Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
 var app = new Vue({
-  el: '#app'
+  el: '#app',
+  // router,
+  // store,
+  components: {
+    ExampleComponent: __WEBPACK_IMPORTED_MODULE_0__components_ExampleComponent_vue___default.a
+  }
 });
 
 /***/ }),
@@ -33918,7 +33927,8 @@ if (false) {
 }
 
 /***/ }),
-/* 42 */
+/* 42 */,
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45885,18 +45895,18 @@ module.exports = Vue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(38).setImmediate))
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 if (false) {
   module.exports = require('./vue.common.prod.js')
 } else {
-  module.exports = __webpack_require__(42)
+  module.exports = __webpack_require__(43)
 }
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(11);

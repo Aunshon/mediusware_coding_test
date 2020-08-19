@@ -1,8 +1,13 @@
 <?php $__env->startSection('content'); ?>
 
-
+<div id="app">
 <div class="container-fluid app-body settings-page">
 	<h3>Recent post sent to buffer</h3>
+        <div clall="row">
+            <div class="col-md-12">
+                <input type="text"/>
+            </div>
+        </div>
 		<div class="row">
 		<div class="col-md-12">
 			<table class="table table-hover social-accounts"> 
@@ -37,6 +42,7 @@
 	</div>
 
 </div>
-<?php $__env->stopSection(); ?>
 
+</div>
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
